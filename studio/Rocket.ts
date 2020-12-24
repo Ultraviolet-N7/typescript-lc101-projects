@@ -1,34 +1,51 @@
 import { Payload } from './Payload';
 import { Cargo } from './Cargo';
+import { Astronaut } from './Astronaut';
 
 export class Rocket implements Payload {
     massKg: number;
     name: string;
     totalCapacityKg: number;
-    cargoItems: string[];
-    astronauts: Astronaut[];
+    cargoItems: Cargo[] = [];
+    astronauts: Astronaut[] = [];
+    
 
     constructor(name: string, totalCapacityKg: number) {
         this.name = name;
-        this.massKg = massKg;
         this.totalCapacityKg = totalCapacityKg;
     }
-    sumMass(items: Payload[]): number {
-        let itemMass = 0;
-        for (let i=0; i < items.length; i++){
-        itemMass += items[i];
-        return itemMass;
-        }
-    }
-    currentMassKg(): number {
-        return this.sumMass(this.astronauts + this.cargoItems);
-    }
-    canAdd(item: Payload): boolean{
-        if (this.currentMassKg() + item.massKg <= this.totalCapacityKg) {
-            return true;
-        }
-    }    
-    addCargo(cargo: Cargo): boolean {
 
-    }    
+    sumMass(items: Payload[]): number {
+        let sum: number = 0;
+        for (let i=0; i < items.length; i++){
+        sum += items[i].massKg;
+        }
+        return sum
+    }
+
+    currentMassKg(): number {
+        return this.sumMass(this.astronauts) + this.sumMass(this.cargoItems);
+    }
+
+    canAdd(item: Payload): boolean{
+        return (this.currentMassKg() + item.massKg) <= this.totalCapacityKg 
+    }   
+
+    addCargo(cargo: Cargo): boolean {
+        if(this.canAdd(cargo) === true){
+            this.cargoItems.push(cargo);
+            return true;
+        }else{
+            return false;
+        }
+    }  
+    
+    addAstronaut(astronaut: Astronaut): boolean {
+        if (this.canAdd(astronaut) === true){
+            this.astronauts.push(astronaut);
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
